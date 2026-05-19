@@ -6,7 +6,7 @@
 
 ![Compatible](https://img.shields.io/badge/compatible-tosu-orange?style=flat-square)
 ![Resolution](https://img.shields.io/badge/resolution-1000×250-green?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
+![License](https://img.shields.io/badge/license-GPL--3.0-lightgrey?style=flat-square)
 
 Visualizes **hit error ticks** on a timing bar and tracks **early / late counts** per judgement tier in real time.  
 Works as an in-game overlay or OBS browser source.
