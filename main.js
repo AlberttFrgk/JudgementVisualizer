@@ -19,10 +19,11 @@ class WebSocketManager {
 
         this.sockets[url].onclose = () => {
             delete this.sockets[url];
-            interval = window.setTimeout(() => this.createConnection(url, callback, filters), 1000);
+            interval = setTimeout(() => this.createConnection(url, callback, filters), 1000);
         };
 
         this.sockets[url].onmessage = ({ data }) => {
+            if (!data) return;
             try {
                 const parsed = JSON.parse(data);
                 if (parsed && typeof parsed === "object" && !("error" in parsed)) callback(parsed);
@@ -484,6 +485,7 @@ wsManager.api_v2((data) => {
             colorsEl.innerHTML = "";
             buildGrid(cache.mode, cache.windows.length);
             const barPal = getBarPalette(cache.mode);
+            const fragment = document.createDocumentFragment();
             
             let maxBarWidth = 0;
             cache.windows.forEach((width, index) => {
@@ -494,17 +496,23 @@ wsManager.api_v2((data) => {
                 div.style.width = `${w}px`;
                 div.style.backgroundColor = barPal[index] || barPal[barPal.length - 1];
                 div.style.zIndex = 10 - index; 
-                colorsEl.appendChild(div);
+                fragment.appendChild(div);
             });
+            colorsEl.appendChild(fragment);
             
             setCSSVar("--max-bar-width", `${maxBarWidth}px`);
             resetOverlay();
             cache.processedHits = 0;
             cache.curTotalHits = 0;
         }
-        containerEl.classList.remove("hidden");
+
+        // Hide entirely if playing Catch / Fruits
+        if (mode === "catch" || mode === "fruits") {
+            containerEl.classList.add("hidden");
+        } else {
+            containerEl.classList.remove("hidden");
+        }
         
-        // Sum all hit types to get a grand total for change detection
         const totalHits = (data.play?.hits?.geki  || 0)
                         + (data.play?.hits?.[300]  || 0)
                         + (data.play?.hits?.katu   || 0)
@@ -535,37 +543,40 @@ wsManager.api_v2((data) => {
 
 wsManager.api_v2_precise((data) => {
     if (cache.state !== "play") return;
+    if (cache.mode === "catch" || cache.mode === "fruits") return;
+
+    const hitErrors = data.hitErrors;
 
     if (data.currentTime < (cache.lastTime || 0) - 50) {
         resetOverlay();
         cache.lastTime = data.currentTime;
-        cache.processedHits = data.hitErrors.length; 
+        cache.processedHits = hitErrors.length; 
         return;
     }
     cache.lastTime = data.currentTime;
 
-    if (data.hitErrors.length < cache.processedHits) {
-        if (data.hitErrors.length === 0) {
+    if (hitErrors.length < cache.processedHits) {
+        if (hitErrors.length === 0) {
             resetOverlay();
             cache.processedHits = 0;
-        } else if (cache.processedHits - data.hitErrors.length > 5) {
+        } else if (cache.processedHits - hitErrors.length > 5) {
             resetOverlay();
-            cache.processedHits = data.hitErrors.length;
+            cache.processedHits = hitErrors.length;
         }
         return;
     }
 
-    if (data.hitErrors.length > cache.processedHits) {
-        const newHits = data.hitErrors.slice(cache.processedHits);
-        cache.processedHits = data.hitErrors.length;
+    if (hitErrors.length > cache.processedHits) {
+        const newHits = hitErrors.slice(cache.processedHits);
+        cache.processedHits = hitErrors.length;
         
         const mode = cache.mode;
         const windows = cache.windows;
         
-        newHits.forEach(err => {
-            const ms = err;
+        for (let i = 0; i < newHits.length; i++) {
+            const ms = newHits[i];
             const msAbs = Math.abs(ms);
-            tickPool.add(err, windows, mode); 
+            tickPool.add(ms, windows, mode); 
             preciseBuffer.push(ms);
             
             if (mode === "mania") {
@@ -585,7 +596,7 @@ wsManager.api_v2_precise((data) => {
                 else if (msAbs <= windows[2]) { ms < 0 ? hitTally.std[1].e++ : hitTally.std[1].l++; }
                 else                          { ms < 0 ? hitTally.std[2].e++ : hitTally.std[2].l++; }
             }
-        });
+        }
         
         if (preciseBuffer.length > 100) {
             preciseBuffer.splice(0, preciseBuffer.length - 100);
