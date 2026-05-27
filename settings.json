@@ -3,7 +3,7 @@
         "uniqueID": "color300g",
         "type": "color",
         "title": "MAX (300g) Color",
-        "description": "",
+        "description": "Used on Mania MAX (300g).",
         "options": [],
         "value": "#ffffff"
     },
@@ -11,7 +11,7 @@
         "uniqueID": "color300",
         "type": "color",
         "title": "Perfect (300) Color",
-        "description": "",
+        "description": "Used on Mania Perfect (300), osu! 300, and Taiko Great.",
         "options": [],
         "value": "#ffcc22"
     },
@@ -19,7 +19,7 @@
         "uniqueID": "color200",
         "type": "color",
         "title": "Great (200) Color",
-        "description": "",
+        "description": "Used on Mania Great (200), osu! 100, and Taiko Ok.",
         "options": [],
         "value": "#47e547"
     },
@@ -27,7 +27,7 @@
         "uniqueID": "color100",
         "type": "color",
         "title": "Good (100) Color",
-        "description": "",
+        "description": "Used on Mania Good (100) and osu! 50.",
         "options": [],
         "value": "#50b4ff"
     },
@@ -35,7 +35,7 @@
         "uniqueID": "color50",
         "type": "color",
         "title": "Bad (50) Color",
-        "description": "",
+        "description": "Used on Mania Bad (50).",
         "options": [],
         "value": "#888888"
     },
@@ -43,7 +43,7 @@
         "uniqueID": "color0",
         "type": "color",
         "title": "Miss (0) Color",
-        "description": "",
+        "description": "Used on Misses across all game modes.",
         "options": [],
         "value": "#ff4747"
     },
@@ -151,7 +151,7 @@
         "options": [],
         "value": 0
     },
-{
+    {
         "uniqueID": "hitCountsOnTop",
         "type": "checkbox",
         "title": "Hit Counts Position on Top",
@@ -159,7 +159,7 @@
         "options": [],
         "value": false
     },
-{
+    {
         "uniqueID": "hideArrow",
         "type": "checkbox",
         "title": "Hide Hit Error Arrow",
